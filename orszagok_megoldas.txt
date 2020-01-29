@@ -1,0 +1,116 @@
+<!-- SQL SELECT PHP gyakorlás. A FÁJL KITERJESZTÉSÉT MÓDOSÍTANI KELL .PHP-re!! -->
+<html><body>
+<h1>MySQL SELECT gyakorló PHP</h1>
+<?php
+
+	/* Ha majd le akarunk kérdezni, ez kiírja a válasz tábla tartalmát */
+	function lekerdezes($utasitas)
+	{
+		$eredmeny = mysql_query($utasitas);
+		echo '<table border=1>';
+		while ($sor = mysql_fetch_row($eredmeny))
+		{
+			echo '<tr>';
+			foreach ($sor as $mezo)
+			{
+				echo '<td>' . $mezo . '</td>';
+			}
+			echo '</tr>';
+		}
+		echo '</table>';
+	}
+	/* Létehozzuk a kapcsolatot */
+	$kapcsolat = mysql_connect('localhost', 'root', '');
+	if (!$kapcsolat)
+	{
+		die ('Kapcsolodas sikertelen');
+	}
+	/* Adatbázis kiválasztása */
+	if(!mysql_select_db('selectesgyak', $kapcsolat))
+	{
+		echo 'Adatbázis létrehozása!<br/>';
+		mysql_query("CREATE DATABASE selectesgyak");
+		mysql_select_db('selectesgyak',$kapcsolat);
+
+	}
+	
+	///////////////// INNENTOL KEZDODIK A RESZ, AHOL DOLGOZUNK /////////////////
+	
+	/*	Ország(országKód, név, terület, lakosság, hivatalosNyelv, pénznem, gdp_fõ,  földrészKód)
+		Földrész(földrészKód,  név)
+	*/
+
+	$u = "CREATE TABLE IF NOT EXISTS foldresz (
+		foldreszkod INT(1) PRIMARY KEY,
+		nev VARCHAR(128)
+	)";
+	mysql_query($u);
+	
+	$u = "CREATE TABLE IF NOT EXISTS orszag (
+		orszagkod INT(3) PRIMARY KEY,
+		nev VARCHAR(128),
+		terulet INT(7),
+		lakossag INT(9),
+		nyelv VARCHAR(128),
+		penznem CHAR(3),
+		gdp INT(5),
+		foldreszkod INT(1),
+		FOREIGN KEY (foldreszkod) REFERENCES foldresz(foldreszkod) ON DELETE CASCADE
+	)";
+	mysql_query($u);
+	echo mysql_errno() . mysql_error();
+	/*
+	 * Minta adatok
+	 */
+	$u = "INSERT INTO foldresz VALUES (1, 'Európa')";
+	mysql_query($u);
+	$u = "INSERT INTO foldresz VALUES (2, 'Amerika')";
+	mysql_query($u);
+	$u = "INSERT INTO foldresz VALUES (3, 'Ázsia')";
+	mysql_query($u);
+	$u = "INSERT INTO orszag VALUES (0,'Fantasia', 2323,233,'angol', 'EUR', 12312, 1)";
+	mysql_query($u);
+	$u = "INSERT INTO orszag VALUES (1,'Magyarország', 93030, 9998000,'magyar', 'HUF', 12300, 1)";
+	mysql_query($u);
+	$u = "INSERT INTO orszag VALUES (2,'Ausztria', 90040, 9598004,'német', 'EUR', 25300, 1)";
+	mysql_query($u);
+	$u = "INSERT INTO orszag VALUES (3,'Németország', 340010, 24500000, 'német', 'EUR', 26200, 1)";
+	mysql_query($u);
+	$u = "INSERT INTO orszag VALUES (4,'Franciaország', 560120, 50432000, 'francia', 'EUR', 28300, 1)";
+	mysql_query($u);
+	$u = "INSERT INTO orszag VALUES (5,'Amerikai Egyesült Államok', 1120000, 301452110,'angol', 'USD', 27450, 2)";
+	mysql_query($u);
+	
+	echo 'Országok száma:<br/>';
+	$u = "SELECT COUNT(*) FROM orszag";
+	lekerdezes($u);
+	echo 'Hiba: '. mysql_errno() . mysql_error() .'<br/>';
+	
+	echo 'Angol nyelvû országok terület szerinti növekvõ sorrendben:<br/>';
+	$u = "SELECT nev FROM orszag
+	WHERE nyelv='angol'
+	ORDER BY terulet ASC";
+	lekerdezes($u);
+	echo 'Hiba: '. mysql_errno() . mysql_error() .'<br/>';
+
+	echo 'Átlag GDP/fõ francia országokban, földrészenként:<br/>';
+	$u = "SELECT foldreszkod, AVG(gdp) FROM orszag WHERE nyelv='francia' GROUP BY foldreszkod";
+	lekerdezes($u);
+	echo 'Hiba: '. mysql_errno() . mysql_error() .'<br/>';
+	
+	echo 'Európa és Ázsia összlakossága, földrészenként:<br/>';
+	$u="SELECT foldreszkod, SUM(lakossag) FROM orszag WHERE foldreszkod IN
+	(SELECT foldresz.foldreszkod FROM foldresz WHERE foldresz.nev IN ('Európa', 'Ázsia'))";
+	lekerdezes($u);
+	
+	echo 'Népsûrûség, földrészkódonként:<br/>';
+	$u="SELECT foldreszkod, SUM(lakossag)/SUM(terulet)
+		FROM orszag
+		GROUP BY foldreszkod";
+	lekerdezes($u);
+	//////////////////////////// ITT ER VEGET //////////////////////////////////
+	
+	mysql_close($kapcsolat);
+	
+?>
+</body></html>

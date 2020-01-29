@@ -1,0 +1,14 @@
+$u = "INSERT INTO foldresz VALUES (1, 'Európa')";
+mysql_query($u);
+$u = "INSERT INTO foldresz VALUES (2, 'Amerika')";
+mysql_query($u);
+$u = "INSERT INTO orszag VALUES (1,'Magyarország', 93030, 9998000,'magyar', 'HUF', 12300, 1)";
+mysql_query($u);
+$u = "INSERT INTO orszag VALUES (2,'Ausztria', 90040, 9598004,'német', 'EUR', 25300, 1)";
+mysql_query($u);
+$u = "INSERT INTO orszag VALUES (3,'Németország', 340010, 24500000, 'német', 'EUR', 26200, 1)";
+mysql_query($u);
+$u = "INSERT INTO orszag VALUES (4,'Franciaország', 560120, 50432000, 'francia', 'EUR', 28300, 1)";
+mysql_query($u);
+$u = "INSERT INTO orszag VALUES (5,'Amerikai Egyesült Államok', 1120000, 301452110,'angol', 'USD', 27450, 2)";
+mysql_query($u);
