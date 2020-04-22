@@ -1,0 +1,33 @@
+Megoldások:
+3. feladat:
+SELECT tanulok.nev, tanulok.osztaly, leadasok.idopont, leadasok.mennyiseg
+FROM leadasok, tanulok 
+WHERE leadasok.tanulo=tanulok.tazon AND tanulok.osztaly LIKE '1%'
+
+Locate függvénnyel:
+SELECT tanulok.nev, tanulok.osztaly, leadasok.idopont, leadasok.mennyiseg FROM leadasok, tanulok WHERE leadasok.tanulo=tanulok.tazon AND LOCATE('1',tanulok.osztaly)>0
+LOCATE -> megmondja, hogy az 1-es hanyadik pozicióban található meg egy tanulok.osztályban
+
+4. feladat: 
+SELECT leadasok.idopont, AVG(leadasok.mennyiseg) AS 'napi átlag'
+FROM leadasok
+GROUP BY leadasok.idopont
+
+5.feladat:
+SELECT DISTINCT tanulok.osztaly
+FROM tanulok, leadasok
+WHERE leadasok.idopont="2016-10-28"
+ORDER BY tanulok.osztaly ASC
+
+6.feladat:
+SELECT tanulok.osztaly, SUM(leadasok.mennyiseg)/10000 AS Mázsa
+FROM tanulok, leadasok
+GROUP BY tanulok.osztaly
+
+7.feladat:
+
+SELECT tanulok.nev, tanulok.osztaly, SUM(leadasok.mennyiseg) AS osszeg
+FROM tanulok, leadasok
+WHERE leadasok.tanulo = tanulok.tazon
+GROUP BY tanulok.nev
+ORDER BY 3 DESC LIMIT 10
